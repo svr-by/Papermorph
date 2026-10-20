@@ -46,13 +46,13 @@ Along the way, the bookshelf grows and new Skills are released.
 
 ## Get started
 
-Install in your project directory:
+Install in your project directory (`--agent zcode` for ZCode):
 
 ```bash
 npx skills add DozenTwelve/Papermorph --skill papermorph --agent claude-code
 ```
 
-In Claude Code with Opus 5.5, run:
+In Claude Code or ZCode, run:
 
 ```text
 /papermorph

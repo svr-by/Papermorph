@@ -12,6 +12,8 @@ books/*/pages/
 # Local production state and unused artwork; publish the Skill and finished site.
 /CLAUDE.md
 /plan.md
+# Local ZCode workspace files; the Skill itself is canonical in .claude/.
+/.zcode/
 /img/*
 !/img/readme/
 /img/readme/*
