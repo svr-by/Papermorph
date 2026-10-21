@@ -41,6 +41,7 @@ const TRANSLATIONS = {
     chapterComplete: 'Chapter {n} complete', quickChecks: 'Quick checks', chapterPractice: 'Chapter practice',
     firstTryScore: '{name}: {r} of {t} right on the first try.', notAttempted: '{name}: not attempted.',
     watchAgain: 'Watch again', nextChapter: 'Next chapter',
+    reviewNote: 'Note at {at}', reviewCopied: '{n} notes copied (also in the console). Clear them?',
   },
   ru: {
     decimalSign: ',', stageLabel: 'Анимация урока', stageLabelTitled: 'Анимация урока: {title}',
@@ -77,6 +78,7 @@ const TRANSLATIONS = {
     chapterComplete: 'Глава {n} пройдена', quickChecks: 'Проверь себя', chapterPractice: 'Практика по главе',
     firstTryScore: '{name}: {r} из {t} верно с первой попытки.', notAttempted: '{name}: не выполнялось.',
     watchAgain: 'Смотреть снова', nextChapter: 'Следующая глава',
+    reviewNote: 'Заметка на моменте {at}', reviewCopied: 'Заметок скопировано: {n} (они также в консоли). Очистить?',
   },
   zh: {
     decimalSign: '.', stageLabel: '课程动画', stageLabelTitled: '课程动画：{title}',
@@ -1963,7 +1965,7 @@ const REVIEW_KEY = 'papermorph:review:' + location.pathname;
 const reviewNotes = () => { try { return JSON.parse(localStorage.getItem(REVIEW_KEY) || '[]'); } catch { return []; } };
 function reviewNote() {
   if (P.playing) setPlaying(false);
-  const at = `?beat=${P.i}&t=${P.t.toFixed(1)}`, note = prompt(`Note at ${BEATS[P.i].id} ${at}`);
+  const at = `?beat=${P.i}&t=${P.t.toFixed(1)}`, note = prompt(translate('reviewNote', { at: `${BEATS[P.i].id} ${at}` }));
   if (!note) return;
   try { localStorage.setItem(REVIEW_KEY, JSON.stringify([...reviewNotes(), `ch${String(CHAPTER.number).padStart(2, '0')} ${at} (${BEATS[P.i].id}): ${note}`])); } catch {}
 }
@@ -1971,7 +1973,7 @@ function reviewCopy() {
   const notes = reviewNotes(), text = notes.join('\n');
   console.log(text);
   navigator.clipboard?.writeText(text).catch(() => {});
-  if (confirm(`${notes.length} notes copied (also in the console). Clear them?`)) try { localStorage.removeItem(REVIEW_KEY); } catch {}
+  if (confirm(translate('reviewCopied', { n: notes.length }))) try { localStorage.removeItem(REVIEW_KEY); } catch {}
 }
 // Every action has a key. A question's own keys (P.keys) come first; Shift reaches the player during a question.
 document.addEventListener('keydown', e => {
