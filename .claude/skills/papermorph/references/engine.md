@@ -118,4 +118,10 @@ Keep `<link rel="expect" href="#bar" blocking="render">` in every chapter's head
 - Prefix chapter-specific helpers when their names might collide with engine globals (`rect`, `popIn`, `eqLine`, `fit`, `slot`, `Y0`, `OV`, `camera`, `soft`, `clockRun`, `retire`, `seeking`, `BOOK`, `bookSetting`, `TX`, `texPart`, …); a redeclaration stops the page script. `lint.py` lists every clash.
 - Drag handling: re-parent (append) the element before `setPointerCapture`; moving a node drops its capture.
 - A card whose content is too long for `BAND` should become several `blanks` rows in a wider side card.
+- A BAND card also crushes when prompt and body together overflow the band: the `auto` prompt column then shrinks to one word per line and the body overlaps it. Keep choice options short (compare `x ≠ −5 и x ≠ 5` with `все числа, кроме −5 и 5`) and prompts to one line of math.
+- `$m(...)` and `$tex(...)` are variadic: `$m('x + 3')` or `$m('x', E(2), ' − 3')`. `$m(['x', E(2)])` — an array as the first argument — renders an empty formula of width 2, no error; the crushed card is the only symptom.
+- `frac()` returns `{ g, w, t, b, x0 }`, not an element: tween and pulse `frac(...).g`.
+- `eqLine()` draws its own sign between L and R; an `=` inside the parts renders `= =`. Pass other signs as `sym`.
+- `panel()` fades only the panel group. Anything drawn into `scene` itself (or another group that persists, like `S.line`) survives every later beat: collect such elements and `hide()` them before the beat ends.
+- The number line keeps `Y0 = 610` with tick labels to ~660: keep derivation rows above y ≈ 560, labels under the line at y ≈ 700+, and end text before x ≈ 1500.
 - When a question beat is continued early, the engine finishes the beat's pending tweens first; don't rely on half-finished fades.

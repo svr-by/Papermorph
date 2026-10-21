@@ -10,15 +10,15 @@ Set `SKILL` to the installed skill folder. Run once for a new slug; use an exist
 BOOK_ID=history
 BOOK_SITE="site/$BOOK_ID"
 BOOK_WORK="books/$BOOK_ID"
-mkdir -p "$BOOK_SITE/lib" "$BOOK_SITE/img" "$BOOK_SITE/ch01" "$BOOK_WORK/chapters" "$BOOK_WORK/images/inbox" "content/$BOOK_ID/ch01" "tools/$BOOK_ID"
-python3 "$SKILL/scripts/engine.py" "$BOOK_SITE"   # the engine into lib/, plus lib/book.css for this book's settings
+mkdir -p "$BOOK_SITE/img" "$BOOK_SITE/ch01" "$BOOK_WORK/chapters" "$BOOK_WORK/images/inbox" "content/$BOOK_ID/ch01" "tools/$BOOK_ID"
+python3 "$SKILL/scripts/engine.py" "$BOOK_SITE"   # the engine into lib/ (engine.py creates lib/ itself; an empty lib/ made by hand hides the book from it), plus lib/book.css for this book's settings
 cp "$SKILL/assets/templates/book.html" "$BOOK_SITE/index.html"
 cp "$SKILL/assets/templates/unit-art.js" "$BOOK_SITE/unit-art.js"
 cp "$SKILL/assets/templates/chapter.html" "$BOOK_SITE/ch01/index.html"
 cp "$SKILL/assets/templates/narration.en.json" "content/$BOOK_ID/ch01/narration.en.json"
 ```
 
-Use the pilot chapter's number in place of `ch01` when the pilot is not the first chapter. Use the agreed primary language: rename the narration source, load `audio/<lang>/timings.js`, and set `CHAPTER.language` to match (default `en`). Take `voice` and `rate` for each narration file from `style.json`, and translate the template's visible UI text as needed before the pilot.
+Use the pilot chapter's number in place of `ch01` when the pilot is not the first chapter. Use the agreed primary language: rename the narration source, load `audio/<lang>/timings.js`, and set `CHAPTER.language` to match (default `en`). Take `voice` and `rate` for each narration file from `style.json`, and translate the template's visible UI text as needed before the pilot. In a language other than English, audit the engine's fallbacks before delivering: translation keys missing from `TRANSLATIONS` fall back to English (the `?review` prompts did), the `unit-art.js` template ships an English placeholder sketch, and the cover's `<html lang>` must match.
 
 If the book's formulas need LaTeX ([engine.md](engine.md#latex)), add MathJax (with its license) to `lib/`, and load `../lib/mathjax.js` right after `engine.js` in every chapter:
 
