@@ -18,7 +18,7 @@ button[hidden] { display: none; }
 #frame { position: absolute; left: 50%; top: 50%; width: 1600px; height: 960px; transform: translate(-50%, -50%) scale(var(--k, .5));
   border-radius: 20px; overflow: hidden; background: var(--board); box-shadow: 0 0 0 1px var(--edge), 0 30px 80px rgba(0, 0, 0, .45); }
 #stage { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; display: block;
-  background: radial-gradient(75% 75% at 50% 45%, rgba(0,0,0,0) 60%, rgba(0,0,0,.35)), var(--grain, none), #1d2b27; }
+  background: var(--stage-shade, radial-gradient(75% 75% at 50% 45%, rgba(0,0,0,0) 60%, rgba(0,0,0,.35))), var(--grain, none), var(--board); }
 #ui { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; pointer-events: none; }
 #ui > * { pointer-events: auto; }
 
@@ -39,7 +39,7 @@ button[hidden] { display: none; }
 .paused-mark div { padding: 14px 30px; border-radius: 999px; background: rgba(15, 22, 19, .85); color: var(--dim); font-size: 22px; }
 
 /* Question cards inside the picture. */
-.card { position: absolute; padding: 20px 26px; border-radius: 20px; background: rgba(34, 50, 45, .97); border: 1.5px solid var(--edge); border-left: 7px solid var(--quiz); box-shadow: 0 14px 44px rgba(0, 0, 0, .35); }
+.card { position: absolute; padding: 20px 26px; border-radius: 20px; background: var(--card-bg, rgba(34, 50, 45, .97)); border: 1.5px solid var(--edge); border-left: 7px solid var(--quiz); box-shadow: 0 14px 44px var(--card-shadow, rgba(0, 0, 0, .35)); }
 .card.band { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-areas: "pic head body acts" "pic fb body acts"; column-gap: 28px; align-items: center; align-content: center; min-height: 150px; }
 .band .mascot { grid-area: pic; }
 .band .head { grid-area: head; align-self: end; }
@@ -96,7 +96,7 @@ button[hidden] { display: none; }
 .tok { cursor: grab; touch-action: none; }   /* a finger drags the chip instead of scrolling the page */
 
 /* Controls strip, part of the frame. */
-#bar { position: absolute; left: 0; top: 900px; width: 1600px; height: 60px; display: flex; align-items: center; gap: 10px; padding: 0 20px; background: #16211d; border-top: 1px solid #2a3b35; }
+#bar { position: absolute; left: 0; top: 900px; width: 1600px; height: 60px; display: flex; align-items: center; gap: 10px; padding: 0 20px; background: var(--bar-bg, #16211d); border-top: 1px solid var(--bar-line, #2a3b35); }
 .icon { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--edge); background: var(--panel); display: grid; place-items: center; flex: none; padding: 0; }
 .icon svg { width: 18px; height: 18px; fill: var(--chalk); }
 .icon .i-pause { display: none; }

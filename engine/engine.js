@@ -247,13 +247,17 @@ document.body.insertAdjacentHTML('afterbegin', `<div id="frame">
 
 /* ---------- drawing helpers ---------- */
 const NS = 'http://www.w3.org/2000/svg';
-const COL = { nat: '#f4a48c', whole: '#86c9e8', int: '#f3c95c', rat: '#e8a0c8', irr: '#8fd6b0', real: '#bba8ee',
-  chalk: '#ece8dc', dim: '#9aaba3', faint: '#5d7068', task: '#f0b45a', good: '#8fd6b0', bad: '#f08c7a', board: '#1d2b27' };
-const UI = '"Avenir Next","Segoe UI","Helvetica Neue",Arial,sans-serif';
 // Book settings (lib/book.css, next to engine.css and imported by it): --math-font for numbers and formulas,
-// --progress-key for the localStorage key the cover and chapters share.
+// --progress-key for the localStorage key the cover and chapters share, --col-* to recolour the six hues.
 const BOOK = getComputedStyle(document.documentElement);
 const bookSetting = name => BOOK.getPropertyValue(name).trim().replace(/^(["'])([^"']*)\1$/, '$2');   // unquote a lone string only
+const colVar = (name, fallback) => BOOK.getPropertyValue(name).trim() || fallback;
+const COL = { nat: colVar('--col-nat', '#f4a48c'), whole: colVar('--col-whole', '#86c9e8'), int: colVar('--col-int', '#f3c95c'),
+  rat: colVar('--col-rat', '#e8a0c8'), irr: colVar('--col-irr', '#8fd6b0'), real: colVar('--col-real', '#bba8ee'),
+  chalk: colVar('--chalk', '#ece8dc'), dim: colVar('--dim', '#9aaba3'), faint: colVar('--faint', '#5d7068'),
+  task: colVar('--task', '#f0b45a'), good: colVar('--good', '#8fd6b0'), bad: colVar('--bad', '#f08c7a'),
+  board: colVar('--board', '#1d2b27') };
+const UI = '"Avenir Next","Segoe UI","Helvetica Neue",Arial,sans-serif';
 const MATH = bookSetting('--math-font') || '"STIX Two Text","Cambria Math","Iowan Old Style",Palatino,Georgia,serif';
 const NAME = { nat: translate('natural'), whole: translate('whole'), int: translate('integers'), rat: translate('rational'), irr: translate('irrational'), real: translate('real') };
 // Card positions inside the 1600×900 picture.
