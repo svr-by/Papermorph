@@ -38,6 +38,7 @@ Before writing code, list the beats. For each lesson beat decide what the eye sh
 - **Related things travel together.** A label and its object, a term and its value, an arrow and what it points at stay near each other and move as one; when the choreography would pull them apart, rearrange the frame instead of stretching the link.
 - **Nothing overlaps.** Object sizes and the gaps between them are chosen so elements never cover each other — in the layout and while moving; the `overlap.py` pass at delivery only confirms what the frame already guarantees.
 - **The stage stays balanced.** Screen space is spent rationally: no region packed with cards, labels and shapes while another sits empty; if one area overflows, split the moment across beats or rearrange the frame.
+- **Tier 0 (`slides`) holds the frame.** The picture is laid out and revealed at the beat's start, then stays; gentle ambient motion — rotation, sway, pulse (a `clockRun` periodic in `t`) — keeps it alive, and the narration and questions carry the change. A slide never rearranges itself mid-beat; the book's slide kit builds these frames ([slides.md](slides.md)).
 - **Teach the chapter's scope**, choosing sections by idea; note any reordering in `chapters/chNN.md`.
 
 ## Narration

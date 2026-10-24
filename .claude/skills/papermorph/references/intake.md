@@ -21,17 +21,20 @@ Run the split ([SKILL.md](../SKILL.md#pipeline), step 1) and read the contents, 
 
 ## 3. Tier
 
-Offer the animation tiers as reference points. The published books at https://papermorph.diamonddoge.org/ show the first two; link them.
+Offer the animation tiers as reference points. The published books at https://papermorph.diamonddoge.org/ show tiers 1 and 2; link them.
 
-1. **Diagrams that change**: symbols, number lines, graphs and shapes built in code, rearranged as the narration explains (the maths books). Lightest: about 100k tokens a chapter, works on a smaller model.
+0. **Slides**: static vector slides — each beat's picture is laid out once, revealed with entrance fades and draws, then holds while the narration explains, kept alive by gentle ambient motion (rotation, sway, pulse); questions keep the reader acting. The lightest: about 40–60k tokens a chapter, works on the smallest model.
+1. **Diagrams that change**: symbols, number lines, graphs and shapes built in code, rearranged as the narration explains (the maths books). Lightest of the changing tiers: about 100k tokens a chapter, works on a smaller model.
 2. **Illustrated scenes**: characters act out the idea, the camera moves, external images and a storyboard before motion (the science book). About 400k tokens a chapter on a large model.
 3. **Picture book**: coming, not available yet.
 4. **Documentary**: coming, not available yet.
 5. **Custom**: the user describes what they want; you judge which abilities it needs and say so.
 
-Recommend one from the chapter's content: abstract and procedural ideas fit tier 1 ([diagrams.md](diagrams.md)); physical and narrative ones fit tier 2 ([scenes.md](scenes.md)). Mixing per beat is allowed under any tier.
+Recommend one from the chapter's content: definitions, worked examples, summaries and revision material — or any book that wants a calm pace — fit tier 0 ([slides.md](slides.md)); abstract and procedural ideas fit tier 1 ([diagrams.md](diagrams.md)); physical and narrative ones fit tier 2 ([scenes.md](scenes.md)). Mixing per beat is allowed under any tier.
 
 ## 4. The look, by tier
+
+**Tier 0** needs the fewest: propose palette, fonts and the language and voice from the book itself. Start the book's slide kit from the skill's template (`assets/templates/slides.js` → `site/<book>/lib/slides.js`) and agree its look with the palette and fonts ([slides.md](slides.md)). If the subject needs pictures of real things — vehicles, people, tools — offer free CC0/public-domain sources and record them in `images` ([slides.md](slides.md#pictures)). Then make the chapter's narration and its first one or two beat slides, laid out at real size with their entrances ([SKILL.md](../SKILL.md#chapter-loop), steps 2–4), capture key frames with `strip.py`, show the sheet and ask: go ahead as it is (recommended), or one of two or three concrete changes. Once agreed, write `style.json` and make the chapter.
 
 **Tier 1** needs few decisions. Propose palette, fonts and the language and voice from the book itself. Then make the chapter's narration and its first one or two beats, laid out at real size ([SKILL.md](../SKILL.md#chapter-loop), steps 2–3), and capture a few key frames with `strip.py`. Show the sheet and ask: go ahead as it is (recommended), or one of two or three concrete changes (calmer, more colour, larger type …). Once agreed, write `style.json` and make the chapter.
 
@@ -48,15 +51,15 @@ Start from [the template](../assets/templates/style.json). Blocks are grouped by
 
 | Block | What it holds | Present in |
 |---|---|---|
-| `schema`, `tier`, `book` | schema version; `1`, `2` or `"custom"`; title, slug, language, readers, pilot chapter | all |
+| `schema`, `tier`, `book` | schema version; `0`, `1`, `2` or `"custom"`; title, slug, language, readers, pilot chapter | all |
 | `words` | the user's own words about the look, verbatim, with later feedback that changed the bar | all |
 | `look` | palette, what each colour means, text and maths fonts, notation and rounding | all |
 | `voice` | TTS engine (`edge`, or `kokoro` when Edge is unavailable or local audio is wanted), voice, rate | all |
 | `pacing` | minutes per chapter, where checks and practice go | all |
 | `engine` | engine source and version used to build the book | all |
 | `scenes` | art style, cast, how storyboards are reviewed | tier 2 |
-| `components` | shared elements: name, file, what each does | tier 2, tier 1 when the book has some |
-| `images` | where images may come from, credit rules | tier 2 |
+| `components` | shared elements: name, file, what each does | tier 2, tier 1 or 0 when the book has some |
+| `images` | where images may come from, credit rules | tier 2, tier 0 when the book uses sourced pictures |
 | `approved` | chapters the user approved and what each shows well | filled as chapters are approved |
 
 Leave out blocks the tier does not use. Later tiers add their own blocks (for example `illustration` or `footage`) beside these; a reader that meets a block it does not know reads it as plain intent. Increase `schema` only when an existing field changes meaning.

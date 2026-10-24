@@ -58,7 +58,7 @@ In Claude Code or ZCode, run:
 /papermorph
 ```
 
-It looks for the PDF in your project, then asks the rest. Diagrams that change (tier 1) suit maths and other abstract topics; illustrated scenes (tier 2) suit physics and stories. Picture books and documentaries are coming.
+It looks for the PDF in your project, then asks the rest. Slides (tier 0) suit definitions, worked examples and calm-paced books; diagrams that change (tier 1) suit maths and other abstract topics; illustrated scenes (tier 2) suit physics and stories. Picture books and documentaries are coming.
 
 Before you review a chapter, `scripts/lint.py` catches broken names, missing audio and stale narration in under a second.
 
