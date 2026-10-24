@@ -34,6 +34,10 @@ Before writing code, list the beats. For each lesson beat decide what the eye sh
 
 - **Open on the subject.** When a beat clears the picture, the new topic appears right away; labels and steps follow the words. Short pauses for thought are fine.
 - **One new thing at a time**, and **the same colour means the same thing** across the chapter and, where it fits, the book.
+- **Animate once, without jerks.** A change is performed one time; repeating a finished animation for emphasis only pads the beat, and replay is what the player's R key is for. Objects move through tweens with an ease — never twitch, jump or shake unless the story calls for it.
+- **Related things travel together.** A label and its object, a term and its value, an arrow and what it points at stay near each other and move as one; when the choreography would pull them apart, rearrange the frame instead of stretching the link.
+- **Nothing overlaps.** Object sizes and the gaps between them are chosen so elements never cover each other — in the layout and while moving; the `overlap.py` pass at delivery only confirms what the frame already guarantees.
+- **The stage stays balanced.** Screen space is spent rationally: no region packed with cards, labels and shapes while another sits empty; if one area overflows, split the moment across beats or rearrange the frame.
 - **Teach the chapter's scope**, choosing sections by idea; note any reordering in `chapters/chNN.md`.
 
 ## Narration
