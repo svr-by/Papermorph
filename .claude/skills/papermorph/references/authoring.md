@@ -22,9 +22,9 @@ Most books are for children; `style.json` `readers` names the audience. Write fo
 - **Plain words first.** A new term gets one short sentence in everyday language before it is used, and a dense source formulation is re-said simply; one new term per beat is plenty. After the plain introduction, use the book's exact term and no synonyms — the reader meets that word again in class and in tests.
 - **Concrete before abstract.** A thing the reader can see, count or feel appears before its symbol; the symbol lands next to the thing, never alone.
 - **Life is allowed.** The source's situations may be replaced by ones closer to the reader's life, and dry wording may be loosened; the notation and the terms stay faithful, so the lesson still maps onto the book.
-- **One thread.** When the content allows, hang the chapter on one running situation that grows from beat to beat (the tourists' boat in algebra9 ch01), instead of scattered examples.
+- **One thread.** When the content allows, hang the chapter on one running situation that grows from beat to beat, instead of scattered examples.
 - **Explain, then exercise — per idea.** Each idea is taught and shown before any question about it, and the question that drills it follows right after; the chapter practice at the end consolidates, it never introduces. Do not stack all theory before all practice: young readers cool off.
-- **Recall, don't link.** A term from another chapter is reminded in a word of narration plus, at most, a two-second picture from that chapter ("помните, в § 6…"); a link that leaves the lesson breaks the film. A real cross-link belongs on the contents page, not inside a beat.
+- **Recall, don't link.** A term from another chapter is reminded in a word of narration plus, at most, a two-second picture from that chapter; a link that leaves the lesson breaks the film. A real cross-link belongs on the contents page, not inside a beat.
 - **Wonder is a device.** Open with a question worth answering, let a picture surprise before it explains, and keep the interest serving the idea, not decorating it.
 - **Kind feedback.** A wrong answer gets a hint aimed at that mistake, never a scolding; the reader is always one try from progress.
 
