@@ -122,6 +122,12 @@ Keep `<link rel="expect" href="#bar" blocking="render">` in every chapter's head
 - `$m(...)` and `$tex(...)` are variadic: `$m('x + 3')` or `$m('x', E(2), ' − 3')`. `$m(['x', E(2)])` — an array as the first argument — renders an empty formula of width 2, no error; the crushed card is the only symptom.
 - `frac()` returns `{ g, w, t, b, x0 }`, not an element: tween and pulse `frac(...).g`.
 - `eqLine()` draws its own sign between L and R; an `=` inside the parts renders `= =`. Pass other signs as `sym`.
+- `COL` has exactly these keys: `chalk dim faint task good bad board` plus the six hues `nat whole int rat irr real`. There is no `COL.quiz` (`--quiz` is a CSS variable for UI accents); a missing key is undefined and `mix()` throws on the page.
+- `M()` and built-up fractions carry their `fill` on the child `<text>` nodes: to tween a colour, target `e.querySelectorAll('text')` — a `c_fill` tween on the group has no starting value and `mix(null)` throws on seek.
+- An element that a tween also touches must be driven through its state: inside a `clockRun` use `put(el, { x, y, r, o })`, not raw `setAttribute` — `render()` rewrites the transform from the state and the raw write is lost, so a seeked replay shows a different frame than live play.
+- `T()` never wraps. A sentence longer than ~48 characters at size 31–33 runs past the stage edge; split it into two `T()` rows.
+- `S.line` outlives its beat, and so does its opacity: after `hide(S.line, …)` a later `numberLine()` draws into a hidden group. To reuse the line, clear it and revive it: `S.line.replaceChildren(); put(S.line, { o: 1 });`.
+- Draw area fills before the labels and examples that sit on them — a later fill covers earlier content. A half region is one arc closed with `Z`; two arcs with the same sweep make the whole ellipse.
 - `panel()` fades only the panel group. Anything drawn into `scene` itself (or another group that persists, like `S.line`) survives every later beat: collect such elements and `hide()` them before the beat ends.
 - The number line keeps `Y0 = 610` with tick labels to ~660: keep derivation rows above y ≈ 560, labels under the line at y ≈ 700+, and end text before x ≈ 1500.
 - When a question beat is continued early, the engine finishes the beat's pending tweens first; don't rely on half-finished fades.

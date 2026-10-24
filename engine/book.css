@@ -5,5 +5,12 @@
   --math-font: "Avenir Next", Arial, sans-serif;   face for numbers and formulas (default: a serif, see engine.js)
   --progress-key: "progress";                      localStorage key shared with the cover (default: one per book folder)
 }
+   Palette and cards — engine.js reads these with getPropertyValue, so overrides need :root:root (this file is
+   imported before the engine's rules; stage backgrounds take :root #stage):
+:root:root {
+  --page/--board/--panel/--edge/--chalk/--dim/--faint/--task/--quiz/--good/--bad: the stage and UI colours;
+  --col-nat/--col-whole/--col-int/--col-rat/--col-irr/--col-real: the six hues (COL in engine.js);
+  --card-bg/--card-shadow: question cards (default: dark glass — a light book sets paper, e.g. rgba(248,247,242,.98));
+}
    Style overrides go here too. They come before the engine's rules, so make each selector more specific than the
    engine's, e.g. ':root .card.band' for '.card.band'. */
