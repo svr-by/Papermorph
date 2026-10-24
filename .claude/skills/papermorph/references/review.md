@@ -24,7 +24,7 @@ uv run --with playwright SKILL/scripts/check_blank.py site/<book> chNN --url htt
 uv run --with playwright SKILL/scripts/overlap.py chNN --url http://localhost:8765/<book>/
 ```
 
-`shot.py` captures open/end frames of every beat as 4-up sheets and reports console errors. Look for an empty or unrelated opening, text over drawings or clipped at the edge, a card covering what it asks about, leftovers half faded, geometry contradicting its values, shapes inside circles or curves crossing the outline (check thin geometry on the full-size `chNN_bII_T.png`, not only the sheet), text too small at half size or too much at once, and the same idea in different colours. `check_blank.py` reports openings empty for more than a second after speech starts. `overlap.py` samples every beat and lists where an arrow runs through text or two texts collide, with times, so you can look at exactly those frames.
+`shot.py` captures open/end frames of every beat as 4-up sheets and reports console errors. Look for an empty or unrelated opening, text over drawings or clipped at the edge, a card covering what it asks about, leftovers half faded, geometry contradicting its values, shapes inside circles or curves crossing the outline (check thin geometry on the full-size `chNN_bII_T.png`, not only the sheet), text too small at half size or too much at once, and the same idea in different colours. An end frame is taken seconds after the beat ends, so a beat that fades its picture before its narration ends shows an empty end frame by design; check a live frame (`?beat=N&t=<dur − 1>`) before calling that a bug. `check_blank.py` reports openings empty for more than a second after speech starts. `overlap.py` samples every beat and lists where an arrow runs through text or two texts collide, with times, so you can look at exactly those frames; exponent digits beside their base, an eqLine's own sign and neighbouring glyphs of one formula are expected pairs — act on whole words or labels colliding.
 
 ## Smoothness
 
@@ -32,7 +32,7 @@ uv run --with playwright SKILL/scripts/overlap.py chNN --url http://localhost:87
 
 ## Interaction tests
 
-Adapt `assets/templates/e2e.py` into `tools/<book>/e2e_chNN.py`: it checks playback, that every beat replays the same frame when seeked, that quiz cards stay readable and on stage at two viewport sizes, and walks the answers, practice and finish card. Run it in Chromium and with `BROWSER=firefox`. Run existing tests of approved chapters after changing the book's engine or library.
+Adapt `assets/templates/e2e.py` into `tools/<book>/e2e_chNN.py`: it checks playback, that every beat replays the same frame when seeked, that quiz cards stay readable and on stage at two viewport sizes, and walks the answers, practice and finish card. Run it in Chromium and with `BROWSER=firefox`. Run existing tests of approved chapters after changing the book's engine or library. Feedback text comes from the book's language: assert on the word `translate('correct')` yields («Верно» in ru), not the English one.
 
 After scoring changes, check a wrong first try stays recorded after revisiting and a restart clears it; after progress changes, check book isolation and missing or malformed stored data. Fix engine bugs at the engine source and copy them to the books with `scripts/engine.py`; book-specific settings stay in each book's `lib/book.css`.
 

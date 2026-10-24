@@ -8,7 +8,9 @@ the answers, practice and finish card. Copy to tools/<book>/e2e_chNN.py and fill
 import asyncio, os
 from playwright.async_api import async_playwright
 URL = os.environ.get("URL", "http://localhost:8765/BOOK/ch01/")
-# Question beat id -> keys for each question in turn: '1'..'9' picks a choice; '=a,b' fills the boxes and checks.
+# ANSWERS steps per question: '1'..'9' press a choice; ':key' only presses (a grid with multi:false
+# advances on press and is checked by a later Enter); '=a,b' fills the boxes and checks; '' presses Enter.
+# Feedback is in the book's language: assert on what translate('correct') yields (e.g. 'верно' in ru).
 ANSWERS = {"q1": ["=7"], "final1": ["1"]}
 
 # The frame reached by seeking straight to t equals the one reached by stepping through the beat (replays are exact).
