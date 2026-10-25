@@ -11,10 +11,14 @@ Errors (exit status 1):
   beat      a beat id has no entry in audio/<lang>/timings.js or no MP3
   mark      m('name') is not a mark of any beat
   stale     the narration's text or [[marks]] differ from timings.js: run tts.py again
-  style     style.json is not valid JSON or lacks schema, tier, book, words, look or voice
+  style     style.json is not valid JSON or lacks schema, tier/mode, book, words, look or voice
 Warnings: a beat's m('name') not among that beat's own marks (beats built by shared helpers can mislead this);
   no beats recognised in a chapter.
 --content defaults to content/<book> (content/ for the first book's legacy layout), --brief to books/<book>.
+
+Page chapters (marked <meta name="papermorph" content="page">) are checked instead: ids the script reads,
+the tab bar and the four tabs, the SECTIONS/audio/narration agreement, duplicate and external references,
+global clashes, viewport and title, size. Page mode carries "mode": "page" in style.json instead of a tier.
 """
 import argparse, json, re, sys
 from pathlib import Path
@@ -25,6 +29,14 @@ INLINE = re.compile(r'<script>(.*?)</script>', re.S)
 BEAT = re.compile(r"\[\s*'(\w+)'\s*,\s*(['\"`])(?:\\.|(?!\2).)*\2\s*,\s*(?:\(\s*(?:m\b|\))|m\s*=>)")   # ['id', 'title', (m, D) =>
 MCALL = re.compile(r"(?<![\w$.])m\(\s*'(\w+)'\s*[,)]")
 MARK = re.compile(r'\[\[(\w+)\]\]')
+PAGEMODE = re.compile(r"""<meta\s+name=["']papermorph["']\s+content=["']page["']""")
+IDREF = re.compile(r"""(?:getElementById\s*\(\s*|\$\(\s*)['"]([\w$-]+)['"]\s*\)""")
+IDDEF = re.compile(r"""\bid\s*=\s*["']([\w$-]+)["']""")
+JSID = re.compile(r"""\.\s*id\s*=\s*['"]([\w$-]+)['"]""")
+SECREF = re.compile(r"""data-sec\s*=\s*["']([\w$-]+)["']""")
+SECLIST = re.compile(r'\bSECTIONS\s*=\s*\[([^\]]*)\]')
+AUDIOBASE = re.compile(r"""\bAUDIO\s*=\s*['"]([^'"]+)['"]""")
+EXTREF = re.compile(r"""(?:\b(?:src|href)\s*=\s*["']|url\(\s*["']?)(?:https?:)?//""", re.I)
 
 
 def depth0(text):
@@ -100,21 +112,10 @@ def words(s):
     return re.sub(r'[^\w]+', ' ', MARK.sub('', s)).lower().split()
 
 
-def lint_chapter(ch, content, out):
-    err = lambda kind, msg: out.append(('E', kind, f'{ch.name}: {msg}'))
-    warn = lambda kind, msg: out.append(('W', kind, f'{ch.name}: {msg}'))
-    html = (ch / 'index.html').read_text(encoding='utf-8')
-    inline = '\n'.join(INLINE.findall(html))
-    # globals: every script the page loads, in order
+def global_clashes(scripts, err):
+    """scripts: [(name, text)] in load order; a repeated top-level declaration is an error."""
     seen = {}
-    for src in SRC.findall(html) + ['(chapter)']:
-        if src == '(chapter)':
-            text, name = inline, 'chapter'
-        else:
-            f = (ch / src).resolve()
-            if f.suffix != '.js' or not f.exists() or f.name in ('timings.js', 'mathjax.js'):   # MathJax declares no globals
-                continue
-            text, name = f.read_text(encoding='utf-8'), f.name
+    for name, text in scripts:
         for ident, kind, line in decls(text):
             if ident in seen:
                 first, k0 = seen[ident]
@@ -122,6 +123,24 @@ def lint_chapter(ch, content, out):
                 err('global', f'{name}:{line} {what} {ident} from {first}')
             else:
                 seen[ident] = (name, kind)
+
+
+def lint_chapter(ch, content, out):
+    err = lambda kind, msg: out.append(('E', kind, f'{ch.name}: {msg}'))
+    warn = lambda kind, msg: out.append(('W', kind, f'{ch.name}: {msg}'))
+    html = (ch / 'index.html').read_text(encoding='utf-8')
+    inline = '\n'.join(INLINE.findall(html))
+    # globals: every script the page loads, in order
+    scripts = []
+    for src in SRC.findall(html) + ['(chapter)']:
+        if src == '(chapter)':
+            scripts.append(('chapter', inline))
+        else:
+            f = (ch / src).resolve()
+            if f.suffix != '.js' or not f.exists() or f.name in ('timings.js', 'mathjax.js'):   # MathJax declares no globals
+                continue
+            scripts.append((f.name, f.read_text(encoding='utf-8')))
+    global_clashes(scripts, err)
     # beats, audio, marks
     lang = (re.search(r"language:\s*'(\w+)'", inline) or [None, 'en'])[1]
     tpath = ch / 'audio' / lang / 'timings.js'
@@ -160,6 +179,79 @@ def lint_chapter(ch, content, out):
                 err('stale', f'beat {b}: narration text differs from the generated audio')
 
 
+def lint_page(ch, content, out):
+    err = lambda kind, msg: out.append(('E', kind, f'{ch.name}: {msg}'))
+    warn = lambda kind, msg: out.append(('W', kind, f'{ch.name}: {msg}'))
+    raw = (ch / 'index.html').read_text(encoding='utf-8')
+    inline = '\n'.join(INLINE.findall(raw))
+    global_clashes([('chapter', inline)], err)
+    # ids: everything the script reads must exist in the static HTML or be assigned in JS
+    static = INLINE.sub('', raw)
+    defs = IDDEF.findall(static) + JSID.findall(inline)
+    for i in set(defs):
+        if defs.count(i) > 1:
+            err('page', f'duplicate id "{i}"')
+    for ref in sorted(set(IDREF.findall(inline)) - set(defs)):
+        err('page', f'"{ref}" is read but no id "{ref}" is defined')
+    for t in ('nav', 'tab1', 'tab2', 'tab3', 'tab4'):
+        if t not in set(defs):
+            err('page', f'no id "{t}" (the tab bar and the four tabs are required)')
+    # sections, audio, narration
+    base = AUDIOBASE.search(inline)
+    lang = re.search(r'audio/(\w+)/', base.group(1)) if base else None
+    lang = lang.group(1) if lang else 'en'
+    m = SECLIST.search(inline)
+    secs = re.findall(r"""['"]([\w$-]+)['"]""", m.group(1)) if m else []
+    refs = set(SECREF.findall(raw))
+    if not secs:
+        err('page', 'no SECTIONS array of section ids')
+    for s in sorted(refs - set(secs)):
+        warn('page', f'data-sec "{s}" is not in SECTIONS')
+    for s in sorted(set(secs) - refs):
+        warn('page', f'SECTIONS entry "{s}" has no data-sec button')
+    folder = base.group(1) if base else f'audio/{lang}/'
+    if secs and not base:
+        err('page', 'no AUDIO folder constant')
+    for s in sorted(set(secs)):
+        if not (ch / folder / f'{s}.mp3').exists():
+            err('audio', f'section {s} has no MP3 in {folder}')
+    tpath = ch / 'audio' / lang / 'timings.js'
+    T = timings(tpath) if tpath.exists() else None
+    if T is None:
+        err('beat', f'no audio/{lang}/timings.js: run tts.py')
+    else:
+        for s in secs:
+            if s not in T:
+                err('stale', f'section {s} has no timings')
+    nar = content / ch.name / f'narration.{lang}.json'
+    if nar.exists():
+        N = json.loads(nar.read_text(encoding='utf-8-sig'))
+        if 'beats' in N:
+            err('stale', 'narration has "beats": a page chapter needs "sections"')
+        for b, text in N.get('sections', {}).items():
+            if b not in secs:
+                err('page', f'narration section {b} is not in SECTIONS')
+            if MARK.findall(text):
+                err('page', f'section {b}: [[marks]] are not supported on pages')
+            if T is not None:
+                if b not in T:
+                    err('stale', f'narration section {b} has no timings')
+                    continue
+                cues = ' '.join(c[1] for c in T[b].get('cues', []))
+                if cues and words(text) != words(cues):
+                    err('stale', f'section {b}: narration text differs from the generated audio')
+    # self-contained, meta, size
+    for m in EXTREF.finditer(raw):
+        err('page', f'external reference: {m.group(0)}…')
+    if not re.search(r"""<meta\s+name=["']viewport["']""", raw):
+        err('page', 'no viewport meta')
+    if '<title>' not in raw:
+        err('page', 'no <title>')
+    size = (ch / 'index.html').stat().st_size
+    if size > 70000:
+        warn('page', f'{size // 1024} KB — aim for under ~60 KB')
+
+
 def lint_style(brief, out):
     p = brief / 'style.json'
     if not p.exists():
@@ -168,7 +260,9 @@ def lint_style(brief, out):
         s = json.loads(p.read_text(encoding='utf-8'))
     except ValueError as e:
         return out.append(('E', 'style', f'style.json: {e}'))
-    missing = [k for k in ('schema', 'tier', 'book', 'words', 'look', 'voice') if k not in s]
+    missing = [k for k in ('schema', 'book', 'words', 'look', 'voice') if k not in s]
+    if 'tier' not in s and 'mode' not in s:
+        missing.append('tier/mode')
     if missing:
         out.append(('E', 'style', f'style.json lacks {", ".join(missing)}'))
 
@@ -185,8 +279,12 @@ def main():
     chs = [a.book / c for c in a.chapters] if a.chapters else sorted(a.book.glob('ch[0-9]*'))
     out = []
     for ch in chs:
-        if (ch / 'index.html').exists():
-            lint_chapter(ch, content, out)
+        f = ch / 'index.html'
+        if f.exists():
+            if PAGEMODE.search(f.read_text(encoding='utf-8')):
+                lint_page(ch, content, out)
+            else:
+                lint_chapter(ch, content, out)
     lint_style(a.brief or root / 'books' / slug, out)
     for level, kind, msg in out:
         print(f'{"error" if level == "E" else "warn "} {kind:6} {msg}')

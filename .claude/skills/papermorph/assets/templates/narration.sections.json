@@ -1,0 +1,9 @@
+{
+  "voice": "en-US-AndrewMultilingualNeural",
+  "rate": "-4%",
+  "sections": {
+    "s0": "The book's opening question, read over the lead card.",
+    "s1": "The first theory section: its heading, then its paragraphs, then its life example. Say symbols and units in words; no [[marks]] on pages.",
+    "s2": "One entry per theory section, ids matching SECTIONS in the page, in the book's order."
+  }
+}

@@ -28,7 +28,7 @@ This Skill takes it further: books you can explore, listen to, and interact with
 </p>
 
 ```text
-PDF -> A short conversation (style.json) -> Storyboards -> Narration -> Animation & quizzes -> Web book
+PDF -> A short conversation (style.json) -> Interactive study pages (page mode) or Storyboards -> Narration -> Animation & quizzes (film mode) -> Web book
 ```
 
 The Skill starts by asking: it finds your PDF, says what the book is, suggests a chapter to try and an animation tier, and offers options at every step, so you can just pick the recommended one. Your choices are saved in `style.json`, the style every later chapter is made against.
@@ -37,6 +37,7 @@ The Skill starts by asking: it finds your PDF, says what the book is, suggests a
 
 ## Roadmap
 
+- [x] **Interactive pages (page mode):** one self-contained study page per chapter — theory with audio, a formula card, step-by-step problems, a self-check quiz and hands-on experiments. The lightest way to make a book.
 - [x] **Math books:** formulas and diagrams that change step by step, with quizzes. Two books on the shelf.
 - [ ] **Physics books:** illustrated scenes, acting characters and camera work. Chapters 9–12 are on the shelf; chapter 12 was made by the new Skill.
 - [ ] **Picture books:** image models and storyboards for interactive picture books. In local testing.
@@ -58,7 +59,7 @@ In Claude Code or ZCode, run:
 /papermorph
 ```
 
-It looks for the PDF in your project, then asks the rest. Slides (tier 0) suit definitions, worked examples and calm-paced books; diagrams that change (tier 1) suit maths and other abstract topics; illustrated scenes (tier 2) suit physics and stories. Picture books and documentaries are coming.
+It looks for the PDF in your project, then asks the rest. Two modes: an **interactive study page** (page mode) — one self-contained page per chapter with experiments, quizzes and audio, the lightest way to make a book — or an **animated lesson** (film mode). In film mode, slides (tier 0) suit definitions, worked examples and calm-paced books; diagrams that change (tier 1) suit maths and other abstract topics; illustrated scenes (tier 2) suit physics and stories.
 
 Before you review a chapter, `scripts/lint.py` catches broken names, missing audio and stale narration in under a second.
 

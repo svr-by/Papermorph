@@ -16,6 +16,13 @@ plus one caption cue per sentence. Only beats whose text or voice changed are
 regenerated; spoken word times are cached, so caption and mark rules can change
 without new audio.
 
+A film-mode narration has a "beats" object (the page waits for marks); a
+page-mode narration has a "sections" object instead — one plain-text entry per
+theory section, ids matching SECTIONS in the page, no marks. Both write
+<id>.mp3 plus a timings.js of durations and cues; in page mode timings.js
+exists for lint.py's staleness check, the page itself does not load it.
+
+
 Narration files are read as UTF-8 (a byte order mark is allowed) on every platform.
 Keep beat ids and mark names ASCII: they become file names and JS keys, and are
 printed to the console.
@@ -198,12 +205,22 @@ async def main(src, out_dir):
     voice, rate, engine = spec["voice"], spec["rate"], spec.get("engine", "edge")
     if engine not in ("edge", "kokoro"):
         raise SystemExit(f"unknown engine {engine!r}: use edge or kokoro")
+    if "beats" in spec and "sections" in spec:
+        raise SystemExit("use either 'beats' (film mode) or 'sections' (page mode), not both")
+    mode = "beats" if "beats" in spec else "sections"
+    if mode not in spec:
+        raise SystemExit("the narration needs a 'beats' object (film mode) or a 'sections' object (page mode)")
+    items = spec[mode]
+    if mode == "sections":
+        bad = next((s for s, t in items.items() if MARK.search(t)), None)
+        if bad:
+            raise SystemExit(f"section {bad!r}: [[marks]] are a film-mode feature; page sections are plain text")
     result = {}
     public = lambda v: {k: v[k] for k in ("dur", "marks", "cues")}
     live = {b: public(v) for b, v in cache.items()
             if {"dur", "marks", "cues"} <= v.keys() and (out_dir / f"{b}.mp3").exists()}
     timings_path = out_dir / "timings.js"
-    for beat, raw in spec["beats"].items():
+    for beat, raw in items.items():
         mp3 = out_dir / f"{beat}.mp3"
         old = cache.get(beat)
         clean, marks = split_marks(raw)

@@ -19,24 +19,34 @@ Greet briefly as Papermorph. Look for PDFs in the working folder and its subfold
 
 Run the split ([SKILL.md](../SKILL.md#pipeline), step 1) and read the contents, the preface and the `text.md` of two or three chapter openings across the book. Say in two or three sentences what the book is: subject, readers, how it teaches. Then offer a chapter to try: name two or three candidates with one line each on what they would show, recommending one that is representative rather than the gentlest opening (a light introduction can pass while hiding the hard problems). A section of a long chapter is fine.
 
-## 3. Tier
+## 3. Mode and tier
 
-Offer the animation tiers as reference points. The published books at https://papermorph.diamonddoge.org/ show tiers 1 and 2; link them.
+First ask how the book should teach, one question, the recommended option first:
+
+- **Interactive page** (page mode, recommended for a first book or a small budget): one self-contained study
+  page per chapter — theory in short sections with audio, a formula card, step-by-step problems, a self-check
+  quiz, two to four hands-on experiments ([page.md](page.md)). The dyslexia-friendly look is fixed; the
+  decisions are few, and a chapter costs about one build pass plus the section audio.
+- **Animated lesson film** (film mode): the chapter plays in the player; pick a tier below.
+- **Custom**: the user describes what they want; you judge which mode and abilities it needs and say so.
+
+In film mode, offer the animation tiers as reference points. The published books at https://papermorph.diamonddoge.org/ show tiers 1 and 2; link them.
 
 0. **Slides**: static vector slides — each beat's picture is laid out once, revealed with entrance fades and draws, then holds while the narration explains, kept alive by gentle ambient motion (rotation, sway, pulse); questions keep the reader acting. The lightest: about 40–60k tokens a chapter, works on the smallest model.
 1. **Diagrams that change**: symbols, number lines, graphs and shapes built in code, rearranged as the narration explains (the maths books). Lightest of the changing tiers: about 100k tokens a chapter, works on a smaller model.
 2. **Illustrated scenes**: characters act out the idea, the camera moves, external images and a storyboard before motion (the science book). About 400k tokens a chapter on a large model.
 3. **Picture book**: coming, not available yet.
 4. **Documentary**: coming, not available yet.
-5. **Custom**: the user describes what they want; you judge which abilities it needs and say so.
 
 Recommend one from the chapter's content: definitions, worked examples, summaries and revision material — or any book that wants a calm pace — fit tier 0 ([slides.md](slides.md)); abstract and procedural ideas fit tier 1 ([diagrams.md](diagrams.md)); physical and narrative ones fit tier 2 ([scenes.md](scenes.md)). Mixing per beat is allowed under any tier.
 
-## 4. The look, by tier
+## 4. The look, by mode
 
-**Tier 0** needs the fewest: propose palette, fonts and the language and voice from the book itself. Start the book's slide kit from the skill's template (`assets/templates/slides.js` → `site/<book>/lib/slides.js`) and agree its look with the palette and fonts ([slides.md](slides.md)). If the subject needs pictures of real things — vehicles, people, tools — offer free CC0/public-domain sources and record them in `images` ([slides.md](slides.md#pictures)). Then make the chapter's narration and its first one or two beat slides, laid out at real size with their entrances ([SKILL.md](../SKILL.md#chapter-loop), steps 2–4), capture key frames with `strip.py`, show the sheet and ask: go ahead as it is (recommended), or one of two or three concrete changes. Once agreed, write `style.json` and make the chapter.
+**Page mode** needs the fewest words: the type, spacing, tinted boxes and controls are fixed by the page's design ([page.md](page.md)). Propose the palette and, above all, what each quantity colour means (`look.meaning` — one colour per quantity, reused across theory, experiments, formulas and problems). Take the language and the TTS voice from the book itself. Then agree the pilot's plan — its sections, experiments, problems and quiz — and the section texts, and make the chapter ([SKILL.md](../SKILL.md#chapter-loop--page)).
 
-**Tier 1** needs few decisions. Propose palette, fonts and the language and voice from the book itself. Then make the chapter's narration and its first one or two beats, laid out at real size ([SKILL.md](../SKILL.md#chapter-loop), steps 2–3), and capture a few key frames with `strip.py`. Show the sheet and ask: go ahead as it is (recommended), or one of two or three concrete changes (calmer, more colour, larger type …). Once agreed, write `style.json` and make the chapter.
+**Tier 0** needs the fewest: propose palette, fonts and the language and voice from the book itself. Start the book's slide kit from the skill's template (`assets/templates/slides.js` → `site/<book>/lib/slides.js`) and agree its look with the palette and fonts ([slides.md](slides.md)). If the subject needs pictures of real things — vehicles, people, tools — offer free CC0/public-domain sources and record them in `images` ([slides.md](slides.md#pictures)). Then make the chapter's narration and its first one or two beat slides, laid out at real size with their entrances ([SKILL.md](../SKILL.md#chapter-loop--film), steps 2–4), capture key frames with `strip.py`, show the sheet and ask: go ahead as it is (recommended), or one of two or three concrete changes. Once agreed, write `style.json` and make the chapter.
+
+**Tier 1** needs few decisions. Propose palette, fonts and the language and voice from the book itself. Then make the chapter's narration and its first one or two beats, laid out at real size ([SKILL.md](../SKILL.md#chapter-loop--film), steps 2–3), and capture a few key frames with `strip.py`. Show the sheet and ask: go ahead as it is (recommended), or one of two or three concrete changes (calmer, more colour, larger type …). Once agreed, write `style.json` and make the chapter.
 
 **Tier 2** has more to settle; ask in rounds:
 1. Art and sources: drawn in code, pixel scenes, illustrated, real images; whether web images (with credits) are acceptable. The recurring characters: propose two or three casts that suit the book, each in one line.
@@ -51,9 +61,9 @@ Start from [the template](../assets/templates/style.json). Blocks are grouped by
 
 | Block | What it holds | Present in |
 |---|---|---|
-| `schema`, `tier`, `book` | schema version; `0`, `1`, `2` or `"custom"`; title, slug, language, readers, pilot chapter | all |
+| `schema`, `mode`/`tier`, `book` | schema version; in page mode `"mode": "page"`, in film mode `tier`: `0`, `1`, `2` or `"custom"`; title, slug, language, readers, pilot chapter | all |
 | `words` | the user's own words about the look, verbatim, with later feedback that changed the bar | all |
-| `look` | palette, what each colour means, text and maths fonts, notation and rounding | all |
+| `look` | palette, what each colour means (in page mode: one colour per quantity), text and maths fonts, notation and rounding | all |
 | `voice` | TTS engine (`edge`, or `kokoro` when Edge is unavailable or local audio is wanted), voice, rate | all |
 | `pacing` | minutes per chapter, where checks and practice go | all |
 | `engine` | engine source and version used to build the book | all |
@@ -62,7 +72,7 @@ Start from [the template](../assets/templates/style.json). Blocks are grouped by
 | `images` | where images may come from, credit rules | tier 2, tier 0 when the book uses sourced pictures |
 | `approved` | chapters the user approved and what each shows well | filled as chapters are approved |
 
-Leave out blocks the tier does not use. Later tiers add their own blocks (for example `illustration` or `footage`) beside these; a reader that meets a block it does not know reads it as plain intent. Increase `schema` only when an existing field changes meaning.
+Leave out blocks the mode does not use. Later modes and tiers add their own blocks (for example `illustration` or `footage`) beside these; a reader that meets a block it does not know reads it as plain intent. Increase `schema` only when an existing field changes meaning.
 
 Deliver the pilot with a choice: approve and make the rest of the book (recommended when it is good), approve and stop here, or one of two or three concrete changes you would make yourself. Fold the answer and any feedback into `words` and the affected block, and add an approved chapter to `approved`. Approved chapters are the strongest anchor: later chapters watch and read them as worked examples.
 

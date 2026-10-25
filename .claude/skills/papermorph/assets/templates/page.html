@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- set lang to the book's language; translate the L strings and every visible label -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="papermorph" content="page"> <!-- page-mode marker: lint.py reads it -->
+<title>§ 1. CHAPTER TITLE</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E📖%3C/text%3E%3C/svg%3E">
+<!-- A starting skeleton, not a design. Replace the content; keep the ids, the wiring and the contract
+     names lint reads: the page meta above, CH, AUDIO, SECTIONS, data-sec, and the four tabs. -->
+<style>
+:root{--bg:#fbf4e2;--card:#fffaf0;--tx:#222;--mut:#5a5346;--line:#d9ccaa;--ac:#1e6fb8;--w:#c2410c;--v:#1d4ed8;--T:#15803d;--n:#7e22ce;--ok:#15803d;--bad:#b91c1c;--key:#fde9c4;--q:#fadcea;--ex:#d8ecf8;--fs:20px;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#26241f;--card:#322f28;--tx:#f1ead8;--mut:#c7bda5;--line:#554f40;--ac:#6db3f2;--w:#fb923c;--v:#7aa7ff;--T:#4ade80;--n:#d8a6ff;--ok:#4ade80;--bad:#f87171;--key:#4a3d22;--q:#4a2c3a;--ex:#1f3445}}
+:root[data-theme="dark"]{--bg:#26241f;--card:#322f28;--tx:#f1ead8;--mut:#c7bda5;--line:#554f40;--ac:#6db3f2;--w:#fb923c;--v:#7aa7ff;--T:#4ade80;--n:#d8a6ff;--ok:#4ade80;--bad:#f87171;--key:#4a3d22;--q:#4a2c3a;--ex:#1f3445}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Verdana,Tahoma,Arial,sans-serif;font-size:var(--fs);line-height:1.9;letter-spacing:.04em;word-spacing:.12em;text-align:left}
+main{max-width:42em;margin:0 auto;padding:16px}
+h1{font-size:1.4em;line-height:1.4;margin:.3em 0 .6em;color:var(--ac)}
+h1 span{font-size:1.5em;margin-right:.3em}
+h2{font-size:1.15em;line-height:1.4;margin:1.8em 0 .4em;color:var(--ac);border-bottom:3px solid var(--ac);padding-bottom:4px}
+p{margin:.5em 0}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 18px;margin:14px 0}
+.lead{border-left:8px solid var(--ac)}
+.key{background:var(--key)}.qbox{background:var(--q)}.exbox{background:var(--ex)}
+.card h3{margin:0 0 .3em;font-size:1em}
+button{font:inherit;font-size:.8em;letter-spacing:.03em;cursor:pointer;border:2px solid var(--line);background:var(--bg);color:var(--tx);border-radius:12px;padding:6px 14px;margin:4px 6px 4px 0}
+button:hover{border-color:var(--ac)}
+.tools{display:flex;flex-wrap:wrap;gap:4px}
+.w{color:var(--w);font-weight:bold}.v{color:var(--v);font-weight:bold}.T{color:var(--T);font-weight:bold}.n{color:var(--n);font-weight:bold}
+.big{font-size:1.25em;margin:.2em 0}
+.fm{border-left:8px solid;padding:6px 12px;border-radius:8px;background:var(--bg);margin:10px 0}
+.tag{display:inline-block;font-size:.62em;letter-spacing:.05em;padding:2px 12px;border:1.5px solid var(--mut);border-radius:999px;color:var(--mut);margin-bottom:2px}
+.def{border:2px solid var(--n);border-radius:12px;padding:8px 14px;margin:12px 0;background:var(--card)}
+.def p{margin:.3em 0}
+.psvg{margin:6px 0 2px}
+.psvg svg{max-width:320px}
+mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+mjx-container svg{display:inline;width:auto;max-width:none;margin:0}
+label{display:block;font-size:.85em;margin-top:6px}
+input[type=range]{width:100%;height:32px}
+.out{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:.85em;margin-top:6px}
+@media(max-width:480px){.out{grid-template-columns:1fr}}
+svg{width:100%;max-width:340px;display:block;margin:0 auto}
+.opt{display:block;width:100%;text-align:left;font-size:.85em;margin:6px 0}
+.ok{border-color:var(--ok)!important}.bad{border-color:var(--bad)!important}
+.fb{font-size:.85em;color:var(--mut);min-height:1.5em}
+small{color:var(--mut)}
+details{margin:6px 0}summary{cursor:pointer}
+.score{font-weight:bold}
+.tab{display:none}.tab.on{display:block}
+#nav{margin:14px 0}#nav button{font-size:.85em;padding:8px 14px}
+#nav button.act{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.life{border-left:6px solid var(--T);background:var(--card);padding:6px 14px;border-radius:8px}
+.ttsbar{margin:2px 0 6px}
+#foot{display:flex;justify-content:space-between;gap:8px;margin:22px 0 8px}
+#foot a{color:var(--ac)}
+</style>
+</head>
+<body>
+<main>
+<div class="tools"><button id="th">🌓 Theme</button></div>
+<h1><span>§ 1.</span> CHAPTER TITLE</h1>
+
+<div class="card lead" id="s0">
+<p>The book's opening question or intro, one or two sentences.</p>
+<div class="ttsbar"><button class="listen" data-sec="s0">🔊 Listen</button><button class="pause" data-sec="s0">⏸ Pause</button></div>
+</div>
+
+<div id="nav" class="tools"><button class="act">📖 Theory</button><button>🧮 Formulas</button><button>✏️ Worked problems</button><button>🎯 Practice</button></div>
+
+<div class="tab on" id="tab1">
+<!-- One theory section per book section, in the book's order. id s1, s2 … matches SECTIONS and the narration. -->
+<h2>First theory section</h2>
+<div class="ttsbar"><button class="listen" data-sec="s1">🔊 Listen</button><button class="pause" data-sec="s1">⏸ Pause</button></div>
+<p>Two to four short sentences. A new <b>term</b> in bold on first use, then only that term.</p>
+<p class="life"><b>🌍 In real life:</b> one to three vivid, correct everyday examples with realistic numbers.</p>
+<!-- Interactive experiment: place right after the section it illustrates. Change the drawing, the sliders
+     and the outputs; keep the pattern: sliders with symbol+value+unit, live outputs from the chapter's
+     formulas in the same colours, show/hide checkboxes, Pause and Reset, one hint line. -->
+<div class="card">
+<h3>🔧 Experiment 1. A point moves along a line</h3>
+<svg viewBox="0 0 380 120" aria-label="A point moves along a line">
+<line x1="20" y1="60" x2="360" y2="60" stroke="currentColor" opacity=".5"/>
+<line id="ax" y1="60" y2="60" stroke="var(--v)" stroke-width="3"/>
+<polygon id="axh" fill="var(--v)"/>
+<circle id="pt" cy="60" r="9" fill="var(--T)"/>
+</svg>
+<label>Speed <span class="v">v</span>: <span id="e_v" class="v"></span> m/s<input id="V" type="range" min="1" max="10" step="1" value="3"></label>
+<label><input type="checkbox" id="sA" checked> show the motion arrow</label>
+<button id="pp">⏸ Pause</button><button id="rs">↺ Reset</button>
+<div class="out">
+<div>Time t = <span id="o_t" class="w"></span> s</div>
+<div>Distance s = v·t = <span id="o_s" class="v"></span> m</div>
+</div>
+<p><small>Change v — what happens to s after the same time? Check the numbers against the formula: s = v·t.</small></p>
+</div>
+
+<div class="card key"><h3>📌 Main conclusions</h3>
+<p>1. First numbered takeaway.</p>
+<p>2. Second takeaway.</p>
+</div>
+</div>
+
+<div class="tab" id="tab2">
+<h2>Formula card</h2>
+<div id="fcards"></div>
+</div>
+
+<div class="tab" id="tab3">
+<h2>Worked problems</h2>
+<div id="tasks"></div>
+</div>
+
+<div class="tab" id="tab4">
+<h2>Control questions</h2>
+<div class="card qbox" id="cq"></div>
+<h2>Check yourself</h2>
+<div class="card"><p class="score">Correct answers: <span id="sc">0</span> of <span id="tot"></span></p></div>
+<div id="quiz"></div>
+</div>
+
+<footer id="foot"><a id="home" href="../#contents">← Contents</a><a id="next" hidden>Next chapter →</a></footer>
+</main>
+<!-- For real fractions and roots: run `engine.py site/<book> --latex` once, then load MathJax right before the
+     script below with <script src="../lib/mathjax.js"></script> and write TeX inline in \( … \). references/page.md
+     has the details (content added later needs MathJax.typesetPromise([el]); scope any svg { … } rule). -->
+<script>
+(function(){
+'use strict';
+// ---- Chapter contract (lint reads CH, AUDIO, SECTIONS; the meta above marks the mode).
+var CH={number:1, next:null};      // next: '../chNN/' once the next chapter exists
+var AUDIO='audio/en/';             // narration clips folder; match <html lang>
+var SECTIONS=['s0','s1'];          // section ids with audio, in theory order
+var L={listen:'🔊 Listen',pause:'⏸ Pause',resume:'▶ Resume',play:'▶ Play',
+       step:'Show step',all:'Show all',reset:'Reset',
+       right:'✅ Right! ',hint:'💡 Think again — try another option.'};
+
+var $=function(i){return document.getElementById(i)};
+function f(x,d){return (+x).toFixed(d).replace('.',',')}   // decimal comma; adapt to the book's notation
+function mk(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e}
+function setA(e,a){for(var k in a)e.setAttribute(k,a[k])}
+
+// ---- progress on the bookshelf (the same key contents.js reads)
+function pkey(){return 'animebook:progress:'+location.pathname.replace(/(ch\d+\/|ch\d+\/index\.html)$/,'')}
+function psave(fn){try{var k=pkey(),s=JSON.parse(localStorage.getItem(k)||'{}');fn(s);localStorage.setItem(k,JSON.stringify(s))}catch(e){}}
+psave(function(s){s.last=CH.number});
+
+// ---- toolbar
+$('th').onclick=function(){var r=document.documentElement,dark=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);r.setAttribute('data-theme',dark?'light':'dark')};
+
+// ---- narration: one clip at a time; switching tabs stops it
+var au=null,curSec=null;
+function stopAu(){if(au)au.pause();au=null;curSec=null;
+  document.querySelectorAll('.pause').forEach(function(b){b.textContent=L.pause})}
+document.querySelectorAll('.listen').forEach(function(b){var s=b.dataset.sec;
+  b.onclick=function(){stopAu();au=new Audio(AUDIO+s+'.mp3');curSec=s;
+    au.onended=function(){if(curSec===s)stopAu()};au.play().catch(function(){})}});
+document.querySelectorAll('.pause').forEach(function(b){var s=b.dataset.sec;
+  b.onclick=function(){if(curSec!==s||!au)return;
+    if(au.paused){au.play().catch(function(){});b.textContent=L.pause}
+    else{au.pause();b.textContent=L.resume}}});
+
+// ---- tabs
+var tb=document.querySelectorAll('#nav button');
+function show(n){stopAu();[1,2,3,4].forEach(function(i){$('tab'+i).className='tab'+(i===n?' on':'')});
+  tb.forEach(function(b,i){b.className=(i+1===n)?'act':''});$('nav').scrollIntoView()}
+tb.forEach(function(b,i){b.onclick=function(){show(i+1)}});
+
+// ---- formulas: [kind tag (definition/rule/property/table…), formula, one-line meaning, colour of the main quantity]
+var F=[
+  ['rule','s = v·t','Distance = speed times time. Unit: m.','var(--v)'],
+  ['fact','1 m = 100 cm','Useful conversion facts from the chapter.','var(--ac)']];
+F.forEach(function(r){var d=mk('div','fm');d.style.borderColor=r[3];
+  d.appendChild(mk('span','tag',r[0]));d.appendChild(mk('div','big',r[1]));d.appendChild(mk('div','',r[2]));
+  $('fcards').appendChild(d)});
+var sym=mk('div','card');sym.appendChild(mk('b','','Symbols: '));
+[['v','speed'],['w','time'],['T','distance']].forEach(function(x,i){
+  if(i)sym.appendChild(document.createTextNode('; '));
+  sym.appendChild(mk('span',x[0],x[0]));sym.appendChild(document.createTextNode(' — '+x[1]))});
+$('fcards').appendChild(sym);
+
+// ---- worked problems: [statement, optional figure SVG ('' for none), [steps: given + SI, formula +
+// substituted numbers naming the formula it uses, 'Answer: …']]
+var P=[
+  ['A point moves at v = 3 m/s. Find the distance s after t = 5 s.','',
+   ['Given: v = 3 m/s, t = 5 s. Find: s.',
+    'Formula (rule): s = v·t = 3 · 5 = 15 m.',
+    'Answer: s = 15 m.']],
+  ['A second problem from the book, covering another formula.','',
+   ['Given: …','Answer: …']]];
+P.forEach(function(p,pi){var d=mk('div','card exbox');d.appendChild(mk('h3','','Problem '+(pi+1)));
+  d.appendChild(mk('p','',p[0]));
+  if(p[1]){var sv=mk('div','psvg');sv.innerHTML=p[1];d.appendChild(sv)}
+  var box=mk('div');d.appendChild(box);var i=0;
+  var b=mk('button','',L.step),all=mk('button','',L.all),rs=mk('button','',L.reset);
+  function add(){if(i<p[2].length){box.appendChild(mk('p','',p[2][i++]));if(i===p[2].length)b.style.display='none'}}
+  b.onclick=add;all.onclick=function(){while(i<p[2].length)add()};
+  rs.onclick=function(){box.textContent='';i=0;b.style.display=''};
+  d.appendChild(b);d.appendChild(all);d.appendChild(rs);$('tasks').appendChild(d)});
+
+// ---- control questions: [question, short correct answer]
+var K=[['A control question from the book?','Its short correct answer.']];
+K.forEach(function(q,i){var d=document.createElement('details');
+  d.appendChild(mk('summary','',(i+1)+'. '+q[0]));d.appendChild(mk('p','',q[1]));$('cq').appendChild(d)});
+
+// ---- quiz: [question, [options], correct index, short explanation]; a question counts once
+var Q=[
+  ['What does s = v·t give?',['distance','speed','time'],0,'The rule card: s = v·t.'],
+  ['v = 2 m/s, t = 4 s. What is s?',['8 m','6 m','2 m','0.5 m'],0,'s = v·t = 2 · 4.']];
+var score=0,attempted=0;$('tot').textContent=Q.length;
+Q.forEach(function(q,i){var d=mk('div','card');d.appendChild(mk('p','',(i+1)+'. '+q[0]));
+  var fb=mk('p','fb'),done=false;
+  var idx=q[1].map(function(_,j){return j});idx.sort(function(a,b){return ((a*7+i*3)%5)-((b*7+i*3)%5)});
+  idx.forEach(function(j){var b=mk('button','opt',q[1][j]);
+    b.onclick=function(){if(!d.dataset.tried){d.dataset.tried='1';attempted++;
+        if(attempted===Q.length)psave(function(s){s.done=s.done||[];if(s.done.indexOf(CH.number)<0)s.done.push(CH.number)})}
+      if(j===q[2]){b.className='opt ok';fb.textContent=L.right+q[3];if(!done){done=true;score++;$('sc').textContent=score}}
+      else{b.className='opt bad';fb.textContent=L.hint}};
+    d.appendChild(b)});
+  d.appendChild(fb);$('quiz').appendChild(d)});
+
+// ---- experiment: SVG + vanilla JS; the numbers on screen must agree with the formulas
+function arrow(l,h,x,y,ex,ey){setA(l,{x1:x,y1:y,x2:ex,y2:ey});
+  var dx=ex-x,dy=ey-y,d=Math.hypot(dx,dy)||1,ux=dx/d,uy=dy/d,px=-uy,py=ux;
+  h.setAttribute('points',ex+','+ey+' '+(ex-ux*13+px*7)+','+(ey-uy*13+py*7)+' '+(ex-ux*13-px*7)+','+(ey-uy*13-py*7));
+  h.style.display=d<4?'none':''}
+var t=0,run=true,last=null;
+function upd(){var v=+$('V').value;$('e_v').textContent=f(v,1);
+  $('o_t').textContent=f(t,1);$('o_s').textContent=f(v*t,1)}
+function draw(){var v=+$('V').value,x=Math.min(20+t*v*32,352);setA($('pt'),{cx:x});
+  var sv=$('sA').checked;$('ax').style.display=sv?'':'none';$('axh').style.display=sv?'':'none';
+  if(sv)arrow($('ax'),$('axh'),x,60,Math.min(x+40,358),60)}
+function loop(ts){var dt=last===null?0:(ts-last)/1000;last=ts;
+  if(run){t+=dt;upd();draw()}requestAnimationFrame(loop)}
+$('V').oninput=function(){upd();draw()};
+$('pp').onclick=function(){run=!run;this.textContent=run?L.pause:L.play};
+$('rs').onclick=function(){t=0;upd();draw()};
+
+// ---- footer
+$('home').href='../#ch'+CH.number;
+if(CH.next){var nx=$('next');nx.hidden=false;nx.href=CH.next}
+
+upd();draw();requestAnimationFrame(loop);
+})();
+</script>
+
+
+
+

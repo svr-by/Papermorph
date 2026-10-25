@@ -18,7 +18,14 @@ cp "$SKILL/assets/templates/chapter.html" "$BOOK_SITE/ch01/index.html"
 cp "$SKILL/assets/templates/narration.en.json" "content/$BOOK_ID/ch01/narration.en.json"
 ```
 
-Use the pilot chapter's number in place of `ch01` when the pilot is not the first chapter. Use the agreed primary language: rename the narration source, load `audio/<lang>/timings.js`, and set `CHAPTER.language` to match (default `en`). Take `voice` and `rate` for each narration file from `style.json`, and translate the template's visible UI text as needed before the pilot. In a language other than English, audit the engine's fallbacks before delivering: translation keys missing from `TRANSLATIONS` fall back to English (the `?review` prompts did), the `unit-art.js` template ships an English placeholder sketch, and the cover's `<html lang>` must match.
+Use the pilot chapter's number in place of `ch01` when the pilot is not the first chapter. For a **page-mode book** the chapter template differs (the engine copy is still needed: the contents page runs on `lib/contents.js`; a page chapter loads none of `lib/` — except `lib/mathjax.js` when its formulas use LaTeX, see [page.md](page.md)):
+
+```sh
+cp "$SKILL/assets/templates/page.html" "$BOOK_SITE/ch01/index.html"
+cp "$SKILL/assets/templates/narration.sections.json" "content/$BOOK_ID/ch01/narration.en.json"
+```
+
+Use the agreed primary language: rename the narration source, load `audio/<lang>/timings.js`, and set `CHAPTER.language` to match (default `en`; in page mode set `AUDIO` to `audio/<lang>/`). Take `voice` and `rate` for each narration file from `style.json`, and translate the template's visible UI text as needed before the pilot. In a language other than English, audit the engine's fallbacks before delivering: translation keys missing from `TRANSLATIONS` fall back to English (the `?review` prompts did), the `unit-art.js` template ships an English placeholder sketch, and the cover's `<html lang>` must match.
 
 If the book's formulas need LaTeX ([engine.md](engine.md#latex)), add MathJax (with its license) to `lib/`, and load `../lib/mathjax.js` right after `engine.js` in every chapter:
 
@@ -35,7 +42,7 @@ A chapter returns to its book's index. Preserve cover → contents → chapter n
 One page: no hash or `#book` shows the cover, `#contents` or `#chNN` the contents; a lesson's home button returns to `#chNN`, and the card grows into the lesson frame through a view transition.
 
 - Edit the title, kicker, lede, the faint chalk phrases on the cover (a few formulas or lines from the book), and the `<title>`.
-- The page's script calls `Contents.book({ start, units, hues })` (from the engine's `lib/contents.js`; the shared styles are `lib/contents.css`). `units`: `[unit title, [[chapter title, minutes], …]]`; chapters are numbered in order from `start` (`{ unit: 1, chapter: 1 }`; a book whose scope starts mid-way, e.g. at unit 3, chapter 9, keeps the original numbers). Add a chapter when its lesson is ready; also set the previous chapter's `CHAPTER.next = '../chNN/'`. An optional third entry `{ unit, chapter, sample: true }` renumbers a unit and marks it as a sample, left out of the chapter count. To show different numbers than the folders, add `label` to `start` (`{ unit: 1, chapter: 9, label: 1 }` shows ch09 as 1) and set the same `CHAPTER.label` in each lesson, which its title screen and completion card show. A chapter's own third entry `{ chapter }` changes only the number on its card; `{ href, chapter }` links a card to another book's chapter, outside this book's count and progress (`href` on a unit's entry does it for the whole unit).
+- The page's script calls `Contents.book({ start, units, hues })` (from the engine's `lib/contents.js`; the shared styles are `lib/contents.css`). `units`: `[unit title, [[chapter title, minutes], …]]`; chapters are numbered in order from `start` (`{ unit: 1, chapter: 1 }`; a book whose scope starts mid-way, e.g. at unit 3, chapter 9, keeps the original numbers). Add a chapter when its lesson is ready; also set the previous chapter's `CHAPTER.next = '../chNN/'` (in a page chapter, `CH.next` in that page, [page.md](page.md#progress-and-registration)). A page chapter reports its own progress — it writes the same key this page reads — and shows an estimated reading time in its units entry. An optional third entry `{ unit, chapter, sample: true }` renumbers a unit and marks it as a sample, left out of the chapter count. To show different numbers than the folders, add `label` to `start` (`{ unit: 1, chapter: 9, label: 1 }` shows ch09 as 1) and set the same `CHAPTER.label` in each lesson, which its title screen and completion card show. A chapter's own third entry `{ chapter }` changes only the number on its card; `{ href, chapter }` links a card to another book's chapter, outside this book's count and progress (`href` on a unit's entry does it for the whole unit).
 - `hues`: one colour per unit, cycling.
 - A book with its own look overrides the tokens of `lib/contents.css` (`--board`, `--chalk`, `--top-bg`, …) in a `<style>` after it, as the template's comment shows; don't copy the stylesheet into the page.
 
@@ -61,11 +68,11 @@ Open `http://localhost:8765/<book>/`. Confirm the cover opens the contents, read
 
 Narration and on-screen text are written in one language first. A second language comes after the book is done and approved: keep beat ids and question ids stable, add `narration.<lang>.json` and audio per language, and decide with the user how switching behaves mid-lesson before building it.
 
-## Video export (optional)
+## Video export (film mode, optional)
 
 `uv run --with playwright SKILL/scripts/export.py chNN --url http://localhost:8765/<book>/ --out OUT --link <lesson URL>` renders the lesson beats to `OUT/chNN.mp4` (1080p, 30 fps) plus `OUT/chNN.srt` for upload with it. Frames come from seeking the beat clock, so the video matches the page exactly; question beats are left out and the video ends on a card pointing to the interactive lesson. It takes about 1.6× the video's length.
 
-## SCORM package (optional)
+## SCORM package (film mode, optional)
 
 For a course in an LMS (Canvas/Quercus, Moodle, Brightspace, Blackboard), package a built book as one SCORM zip:
 

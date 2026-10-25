@@ -16,6 +16,19 @@ Watch every beat to its end, question cards included; problems hide in the beats
 
 `python3 SKILL/scripts/lint.py site/<book> chNN` takes a second and needs no browser: a global name that clashes with the engine or a library (which stops the page script), beats without timings or MP3, marks the code waits for that the narration lacks, narration edited since `tts.py` ran, and a malformed `style.json`. Run it after every edit, before the passes below.
 
+## Page mode
+
+`lint.py` detects a page chapter by its `<meta name="papermorph" content="page">` marker and checks the page contract instead: ids the script reads, the tab bar and the four tabs, the SECTIONS/audio/narration agreement, narration staleness, duplicate and external references, global clashes, viewport, title and size. A page needs no strips, overlap, perf or e2e: it has no timeline. The other automated pass is `pageshot.py`, which audits in a browser everything no eyes should be spent on and captures the frames for visual acceptance:
+
+```sh
+uv run --with playwright SKILL/scripts/pageshot.py <book> chNN                          # audit + 9 frames
+uv run --with playwright SKILL/scripts/pageshot.py <book> chNN --only task,quiz_dark    # re-shoot after a fix
+```
+
+It exits non-zero on any failure: console errors, a tab not switching, a section clip not answering 200, sliders pushed to both extremes while anything leaves its SVG's viewBox (measured in screen coordinates, so a rotated car's wheels count; MathJax glyphs are exempt), task-figure labels colliding, the quiz not scoring each question exactly once or not marking the chapter done, the theme not toggling, page or formula overflow at 360 and 390 px, a broken footer link. Fix and rerun until it prints `AUDIT: PASS` — that machine gate is free; do not spend a worker's tokens on what it already checked.
+
+What remains for eyes is aesthetics: did the design land. The script saves small element captures (a def box, formula cards, a problem with its figure, revealed steps, the quiz in the dark theme, two phone frames) under `books/<book>/review/chNN/pages/`. Hand that folder to one multimodal worker (pm-small in [team.md](team.md) terms) in a single pass; for a book's first chapter add `--full` (every def, formula card, figure and steps card). After a fix, re-shoot only what changed with `--only name1,name2` and have the worker re-judge just those frames — never re-review a whole chapter over a one-label fix. Element captures replaced full-page screenshots on purpose: the target is guaranteed in frame and each PNG is a fraction of the size, so a review pass costs minutes and a few hundred K tokens instead of hours and millions.
+
 ## Frames and openings
 
 ```sh

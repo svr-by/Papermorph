@@ -1,13 +1,13 @@
 ---
 name: papermorph
-description: Make or edit animated, narrated, interactive web books from reference PDFs. Use for book planning, storyboards, chapter animation and exercises, narration, and cover and contents pages, including "make the next chapter" or "fix this animation". Deliver runnable static book files; bookshelf design, bookshelf registration and hosting are separate tasks.
+description: Make or edit web books from reference PDFs in two modes - an animated, narrated lesson film (film mode) or a self-contained interactive study page with experiments and a quiz (page mode). Use for book planning, chapter authoring, narration, exercises, and cover and contents pages, including "make the next chapter", "make this an interactive page" or "fix this animation". Deliver runnable static book files; bookshelf design, bookshelf registration and hosting are separate tasks.
 ---
 
 # Papermorph
 
-Each chapter is a short animated lesson film: the picture carries the explanation, the narration says it, and quick checks and practice happen inside the picture. Good means **alive** (things act and change with weight and timing), **composed** (each moment reads as one picture, text beside what it names), **true** (motion, labels and numbers agree at every moment) and **smooth** (it plays without stutter, Firefox included). Technically a chapter is one 1600×900 SVG stage plus a player; **beats** pair narration clips with timed actions.
+A chapter takes one of two forms. In **film mode** it is a short animated lesson film: the picture carries the explanation, the narration says it, and quick checks and practice happen inside the picture. Good means **alive** (things act and change with weight and timing), **composed** (each moment reads as one picture, text beside what it names), **true** (motion, labels and numbers agree at every moment) and **smooth** (it plays without stutter, Firefox included). Technically a chapter is one 1600×900 SVG stage plus a player; **beats** pair narration clips with timed actions. In **page mode** it is one self-contained interactive study page — theory in short sections with audio, a formula card, step-by-step problems, a self-check quiz and two to four hands-on experiments ([page.md](references/page.md)). No engine, no beats, no storyboard; the lightest way to make a chapter.
 
-What the picture should be depends on the book and on the user, so the work starts with a conversation ([intake.md](references/intake.md)) that ends in `style.json`, the book's agreed style. Every chapter is made against it. `style.json` fixes the atoms (palette and meanings, fonts, voice, cast, shared components, approved chapters); composition stays free, so how each beat is laid out and choreographed is yours to judge against it and the approved chapters. Then read the reference for the technique in use: [diagrams.md](references/diagrams.md) (symbols and diagrams that change), [scenes.md](references/scenes.md) (illustrated scenes, actors, camera), [assets.md](references/assets.md) (shared components, images, sprites), [authoring.md](references/authoring.md) (chapter shape, narration, questions), [engine.md](references/engine.md), [review.md](references/review.md), [site.md](references/site.md), [team.md](references/team.md) (making chapters with subagents).
+What the picture should be depends on the book and on the user, so the work starts with a conversation ([intake.md](references/intake.md)) that ends in `style.json`, the book's agreed style. Every chapter is made against it. `style.json` fixes the atoms (palette and meanings, fonts, voice, cast, shared components, approved chapters); composition stays free, so how each beat is laid out and choreographed is yours to judge against it and the approved chapters. Then read the reference for the technique in use: [diagrams.md](references/diagrams.md) (symbols and diagrams that change), [scenes.md](references/scenes.md) (illustrated scenes, actors, camera), [assets.md](references/assets.md) (shared components, images, sprites), [authoring.md](references/authoring.md) (chapter shape, narration, questions), [page.md](references/page.md) (the interactive study page), [engine.md](references/engine.md), [review.md](references/review.md), [site.md](references/site.md), [team.md](references/team.md) (making chapters with subagents).
 
 Follow the pipeline forward, entering at the requested stage for existing work. User requests override defaults. Re-create explanations, examples and drawings; keep source PDFs, page images and extracted text outside the static output folder and out of version control (`.gitignore`: `*.pdf`, `books/*/pages/`). Deliver a self-contained book folder with a cover, contents, chapters and local preview instructions.
 
@@ -22,7 +22,7 @@ books/<book>/
   chapters/chNN.md            storyboard, errata, feedback
   images/                     inbox, SOURCES.md, image-requests.md, processing scripts
   review/chNN/                storyboard sheets, strips, check output
-content/<book>/chNN/           narration.<lang>.json and TTS cache
+content/<book>/chNN/           narration.<lang>.json (beats in film mode, sections in page mode) and TTS cache
 tools/<book>/                 tests and evidence scripts
 site/<book>/                   the static book (only this is delivered)
   index.html, unit-art.js      cover + contents, unit sketches
@@ -30,22 +30,23 @@ site/<book>/                   the static book (only this is delivered)
       contents.*, units.*        scripts/engine.py
   lib/book.css                 this book's engine settings and style overrides
   lib/*.js, img/               the book's element library and images
-  chNN/index.html, audio/<lang>/   a lesson, its beat MP3s + timings.js
+  chNN/index.html, audio/<lang>/   a lesson: film — beat MP3s + timings.js; page — one self-contained
+                                   interactive HTML + section clips sN.mp3
 ```
 
-`SKILL` means this skill's absolute folder; `<book>` is the book slug, `<lang>` its primary language code. Existing books keep their paths. Needs: `uv`, `ffmpeg`/`ffprobe`, Edge TTS network access (or Kokoro, local: `uv run --python 3.12 --with kokoro`) and Playwright browsers (`uv run --with playwright playwright install chromium firefox`). Preview: `python3 SKILL/scripts/serve.py 8765 site` (no browser caching).
+`SKILL` means this skill's absolute folder; `<book>` is the book slug, `<lang>` its primary language code. Existing books keep their paths. Needs: `uv`, `ffmpeg`/`ffprobe`, Edge TTS network access (or Kokoro, local: `uv run --python 3.12 --with kokoro`) and Playwright browsers (`uv run --with playwright playwright install chromium firefox`). A page-mode book needs only `uv` (pymupdf for the split, edge-tts or kokoro for the clips). Preview: `python3 SKILL/scripts/serve.py 8765 site` (no browser caching).
 
 ## Pipeline
 
 Start with intake whenever `books/<book>/style.json` does not exist yet; reuse answers and approvals already given.
 
 1. **Split.** Run `uv run --with pymupdf SKILL/scripts/outline.py books/<book>/book.pdf`; use `--level N -o books/<book>/sections.json` at chapter depth. For a PDF without usable chapter bookmarks, inspect `split_pages.py … --pages 1-12 --out books/<book>/pages`, then write the map from its contents (schema: `outline.py --help`). Extract chapter text with `split_pages.py … --sections books/<book>/sections.json --out books/<book>/pages --text-only`.
-2. **Intake.** Follow [intake.md](references/intake.md): find the PDF with the user, say what the book is, agree on one chapter to try and a tier, settle the look the way that tier needs, and write `style.json`.
-3. **Initialize.** Follow [site.md](references/site.md#start-a-book-folder); build agreed shared components once into the book's library ([assets.md](references/assets.md)) and list them in `style.json`.
+2. **Intake.** Follow [intake.md](references/intake.md): find the PDF with the user, say what the book is, agree on one chapter to try, the mode (an interactive page or a film — in film mode, a tier), settle the look the way the mode needs, and write `style.json`.
+3. **Initialize.** Follow [site.md](references/site.md#start-a-book-folder); in page mode copy the page template instead of the chapter template; in film mode build agreed shared components once into the book's library ([assets.md](references/assets.md)) and list them in `style.json`.
 4. **Pilot.** Make the chosen chapter through the chapter loop and deliver it for the user's judgement. Fold their feedback into `style.json` and record the chapter under `approved`.
-5. **Remaining chapters and finish**, when the user wants the whole book: write `chapters.md`, produce chapters sequentially (see *Context*), complete cover text, contents and unit sketches using [site.md](references/site.md). Deliver the static book folder, its entry URL for local preview and any unresolved issues. For an LMS, package it as SCORM ([site.md](references/site.md#scorm-package-optional)).
+5. **Remaining chapters and finish**, when the user wants the whole book: write `chapters.md`, produce chapters sequentially (see *Context*), complete cover text, contents and unit sketches using [site.md](references/site.md). Deliver the static book folder, its entry URL for local preview and any unresolved issues. For an LMS, package a film-mode book as SCORM ([site.md](references/site.md#scorm-package-optional)).
 
-## Chapter loop
+## Chapter loop — film
 
 1. **Read** this chapter's `pages/chNN/text.md`; render pages with `split_pages.py … --only chNN` when diagrams or missing text need images. Choose the ideas, examples and sections to teach.
 2. **Beats and narration**: list beats in `chapters/chNN.md` with what each says and which word triggers which action ([authoring.md](references/authoring.md)). Write `content/<book>/chNN/narration.<lang>.json`. **Story review before cost**: audio and motion are the chapter's expensive part — for the pilot, and whenever the story is not already settled, show the user the beat table and the narration text and settle their notes now; a story change after TTS and animation re-pays both. User notes open a review loop: apply each round of notes to the beat table and the narration text, show the corrected version for review again, and repeat until the user explicitly approves moving to the next step. Only after that approval run the costly operations — TTS here, motion in the steps that follow. Later chapters get the same review loop from the coordinator, against `style.json` and the approved chapters. Once approved, `uv run --with edge-tts SKILL/scripts/tts.py content/<book>/chNN/narration.<lang>.json site/<book>/chNN/audio/<lang>` (for `"engine": "kokoro"`: `uv run --python 3.12 --with kokoro …`).
@@ -54,9 +55,17 @@ Start with intake whenever `books/<book>/style.json` does not exist yet; reuse a
 5. **Delivery pass**: watch your output in motion and judge it as a viewer would, against the storyboard; then run the checks in [review.md](references/review.md). Correct what you find, recheck, deliver; report unresolved problems.
 6. **Register**: add the chapter to the contents (`units` in `Contents.book` in `index.html`), set the previous chapter's `CHAPTER.next`, update `chapters.md` and `chapters/chNN.md`. Promote new shared decisions and recurring elements to `style.json` and the library. The coordinator owns this step when using subagents.
 
+## Chapter loop — page
+
+1. **Read** this chapter's `pages/chNN/text.md`; render pages with `split_pages.py … --only chNN` when diagrams or missing text need images. List the sections, the formulas with their book numbers, the worked example and the exercises, the control questions; plan the 2–4 experiments (which formula each demonstrates) and the quiz topics; note the plan in `chapters/chNN.md`.
+2. **Text review before cost**: write `content/<book>/chNN/narration.<lang>.json` with `"sections"` — one plain-text entry per theory section (h2 + paragraphs + life example), symbols and units said in words. Audio is the chapter's only costly operation: for the pilot, and whenever the plan is not settled, show the user the section list and texts, apply their notes, and repeat until they approve; then run `uv run --with edge-tts SKILL/scripts/tts.py content/<book>/chNN/narration.<lang>.json site/<book>/chNN/audio/<lang>` (for `"engine": "kokoro"` as in film mode).
+3. **Build**: copy the page template into `site/<book>/chNN/index.html` and write the page in one pass ([page.md](references/page.md)) — theory from the plan, formula cards, worked problems, practice, experiments. Every number on screen must agree with the formulas; keep the ids and the contract names lint reads (`CH`, `AUDIO`, `SECTIONS`, `data-sec`, the four tabs).
+4. **Check**: `python3 SKILL/scripts/lint.py site/<book> chNN` detects the page mode and checks the contract; fix what it finds. Then walk the page checklist in a browser once ([review.md](references/review.md#page-mode)).
+5. **Register**: add the chapter to the contents (`units` in `Contents.book` in `index.html`), set the previous chapter's `CH.next` in its page, update `chapters.md` and `chapters/chNN.md`.
+
 ## Context
 
-- Keep intake and the pilot in the main conversation. Afterwards, when subagents are available, coordinate each chapter as a team: a fresh worker per step of the chapter loop, each on the cheapest model that does that step well, chapters one after another ([team.md](references/team.md)). Without subagents, run the same loop in the current agent with file-based state.
+- Keep intake and the pilot in the main conversation. Afterwards, when subagents are available, coordinate each chapter as a team: a fresh worker per step of the chapter loop, each on the cheapest model that does that step well, chapters one after another ([team.md](references/team.md)). Without subagents, run the same loop in the current agent with file-based state. A page chapter is cheap enough for one worker end to end; [team.md](references/team.md) has the page-mode note.
 - A worker needs little besides this Skill and `style.json`: the user's words, the look, the approved chapters to watch and read, the element library. A brief adds the chapter, its pages, the step's inputs and outputs and any current user request. Workers reply in a few lines; the coordinator registers the chapter.
 - Read only the reference needed for the current step. Use the engine API and inspect individual functions when needed; copy assets rather than reading their full source as instructions.
 - Keep `style.json` current and short. Chapter status, errata and historical feedback stay in `chapters.md` and `chapters/chNN.md`.
